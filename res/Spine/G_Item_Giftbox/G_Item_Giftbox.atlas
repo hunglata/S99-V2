@@ -1,0 +1,25 @@
+G_Item_Giftbox.png
+size:424,424
+filter:Linear,Linear
+pma:true
+gift
+bounds:2,2,122,111
+offsets:3,0,126,111
+rotate:90
+gift2
+bounds:115,2,122,109
+offsets:10,14,140,140
+rotate:90
+gift3
+bounds:226,2,122,109
+offsets:10,14,140,140
+rotate:90
+gift4
+bounds:296,313,122,109
+offsets:10,14,140,140
+spakle
+bounds:296,265,46,46
+offsets:2,2,50,50
+tia sang
+bounds:2,126,292,296
+offsets:4,0,301,301

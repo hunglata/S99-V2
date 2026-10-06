@@ -1,0 +1,134 @@
+plugins {
+    id "com.android.application"
+}
+
+dependencies {
+    implementation "com.google.android.gms:play-services-games-v2:22.0.0"
+    implementation "com.google.android.gms:play-services-ads:25.4.0"
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+def signingProperty = { String name ->
+    project.findProperty("safex${name}") ?: keystoreProperties[name]
+}
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+def googlePlayGamesServerClientId = project.findProperty("googlePlayGamesServerClientId")
+    ?: localProperties.getProperty("googlePlayGamesServerClientId", "")
+def googlePlayGamesProjectId = project.findProperty("googlePlayGamesProjectId")
+    ?: localProperties.getProperty("googlePlayGamesProjectId", "")
+
+def generatedAssets = layout.buildDirectory.dir("generated/gameAssets")
+def nativeProjectDir = rootProject.projectDir.parentFile
+def gameProjectDir = nativeProjectDir.parentFile
+def safexRoot = System.getenv("SAFEX_ROOT")
+if (!safexRoot) {
+    throw new GradleException("SAFEX_ROOT is required. Run Gradle through the safex CLI.")
+}
+def bunInstallDir = System.getenv("BUN_INSTALL") ?: "${System.getProperty("user.home")}/.bun"
+def bunExecutableName = org.gradle.internal.os.OperatingSystem.current().isWindows() ? "bin/bun.exe" : "bin/bun"
+def bunExecutable = new File(bunInstallDir, bunExecutableName)
+if (!bunExecutable.exists()) {
+    throw new GradleException("Bun executable not found at ${bunExecutable}. Set BUN_INSTALL to Bun's installation directory.")
+}
+def buildGameBundle = tasks.register("buildGameBundle", Exec) {
+    workingDir gameProjectDir
+    commandLine bunExecutable.absolutePath, "./node_modules/vite/bin/vite.js", "build", "--config", "native/vite.config.ts", "--mode", "android"
+}
+def syncGameAssets = tasks.register("syncGameAssets", Sync) {
+    dependsOn(buildGameBundle)
+    from(nativeProjectDir) {
+        include "dist/**"
+    }
+    from(gameProjectDir) {
+        include "res/**"
+    }
+    into(generatedAssets)
+}
+
+android {
+    namespace "com.safex.snake"
+    compileSdk 37
+    ndkVersion "28.2.13676358"
+
+    buildFeatures {
+        resValues = true
+    }
+
+    defaultConfig {
+        applicationId "com.safex.snake"
+        minSdk 24
+        targetSdk 37
+        versionCode 271409
+        versionName "1.1.2"
+        resValue "string", "google_play_games_server_client_id", googlePlayGamesServerClientId
+        resValue "string", "game_services_project_id", googlePlayGamesProjectId
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DJS_SDL_USE_VENDORED=ON"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+            }
+        }
+    }
+
+    signingConfigs {
+        release {
+            def storeFilePath = signingProperty("StoreFile")
+            if (storeFilePath) {
+                storeFile file(storeFilePath)
+                storePassword signingProperty("StorePassword")
+                keyAlias signingProperty("KeyAlias")
+                keyPassword signingProperty("KeyPassword")
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (signingProperty("StoreFile")) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path file("../../CMakeLists.txt")
+            version "3.22.1"
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir(generatedAssets.get().asFile)
+            java.srcDirs += [
+                "$safexRoot/third_party/SDL/android-project/app/src/main/java"
+            ]
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(syncGameAssets)
+}

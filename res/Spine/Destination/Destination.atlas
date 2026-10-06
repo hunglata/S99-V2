@@ -1,0 +1,43 @@
+Destination.png
+size:1080,1080
+filter:Linear,Linear
+pma:true
+1/Flag Blue
+bounds:886,1041,69,35
+1/Flag Red
+bounds:957,1041,69,35
+1/Tower 1
+bounds:2,2,229,309
+offsets:0,0,229,345
+rotate:90
+1/Tower 3
+bounds:806,349,242,324
+offsets:0,0,242,362
+1/tower 2
+bounds:2,675,440,401
+offsets:3,0,443,439
+1/tower 4
+bounds:2,233,440,400
+offsets:4,0,444,441
+rotate:90
+2/Flag Blue
+bounds:1028,1007,69,35
+rotate:90
+2/Flag Red
+bounds:886,1004,69,35
+2/Tower 1
+bounds:313,2,229,309
+offsets:0,0,229,345
+rotate:90
+2/Tower 3
+bounds:806,23,242,324
+offsets:0,0,242,362
+2/tower 2
+bounds:444,675,440,401
+offsets:3,0,443,439
+2/tower 4
+bounds:404,233,440,400
+offsets:4,0,444,441
+rotate:90
+Base
+bounds:1065,1032,4,44

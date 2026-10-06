@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Snakes and ladders</string>
+    <!-- Replace these Google test IDs before publishing. -->
+    <string name="admob_app_id">ca-app-pub-2847117040992400~2511015716</string>
+    <string name="admob_rewarded_ad_unit_id">ca-app-pub-2847117040992400/7357213395</string>
+</resources>

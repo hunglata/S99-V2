@@ -1,0 +1,13 @@
+Target_Hero.png
+size:948,384
+filter:Linear,Linear
+pma:true
+1
+bounds:632,2,313,379
+offsets:39,8,393,393
+2
+bounds:317,2,313,379
+offsets:38,8,393,393
+3
+bounds:2,2,313,379
+offsets:38,9,393,393

@@ -1,0 +1,14 @@
+icon_ready.png
+size:109,111
+filter:Linear,Linear
+pma:true
+background
+bounds:2,45,64,64
+kiem 1
+bounds:68,45,41,39
+rotate:90
+kiem 2
+bounds:45,2,41,39
+rotate:90
+kiem 3
+bounds:2,4,41,39

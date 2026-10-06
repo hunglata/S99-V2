@@ -1,0 +1,16 @@
+Transition.png
+size:1840,716
+filter:Linear,Linear
+pma:true
+scale:0.5
+L1 L
+bounds:882,323,839,388
+offsets:0,20,839,423
+L1 R
+bounds:2,294,878,417
+offsets:0,21,878,442
+L2
+bounds:882,2,956,319
+L3
+bounds:2,32,871,260
+offsets:0,0,871,261
